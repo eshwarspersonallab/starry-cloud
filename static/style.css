@@ -540,6 +540,41 @@ body::after {
   transition-duration: 0.1s;
 }
 
+/* Tailnet-only services seen from outside the tailnet: visible (status dot
+   still live) but dimmed and not clickable. */
+.service-card-locked {
+  cursor: not-allowed;
+  opacity: 0.5;
+  filter: grayscale(0.7);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .service-card-locked:hover {
+    transform: none;
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .service-card-locked:hover .service-icon {
+    transform: none;
+  }
+}
+
+.service-card-locked:active {
+  transform: none;
+}
+
+.service-tag {
+  display: inline-block;
+  margin-top: 0.35rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--glass-border);
+  font-size: 0.68rem;
+  color: var(--text-soft);
+}
+
 .service-card:focus-visible {
   outline: 2px solid var(--accent, #6366f1);
   outline-offset: 2px;

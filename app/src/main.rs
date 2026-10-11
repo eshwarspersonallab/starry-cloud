@@ -1,6 +1,7 @@
 mod auth;
 mod config;
 mod gen_auth;
+mod net;
 mod oidc;
 mod status;
 
@@ -408,6 +409,12 @@ async fn login_get(
     }
     let error = session.flash_message.take();
     let next = query.get("next").map(String::as_str).unwrap_or_default();
+    // With OIDC as the only method, skip the one-button page and go straight to
+    // the provider. Failures come back with a flash message and render the page
+    // instead, so this cannot loop.
+    if state.settings.auth.oidc_auto_login && error.is_none() {
+        return with_session(redirect_response(&oidc_login_url(next)), session, &state);
+    }
     let mut context = BTreeMap::new();
     context.insert(
         "cfg".to_owned(),
@@ -668,11 +675,15 @@ async fn index(
     if session.csrf_token.is_empty() {
         session.csrf_token = new_token();
     }
+    let on_tailnet = peer_ip(&headers, peer, state.settings.app.trusted_proxy_hops)
+        .parse()
+        .is_ok_and(|ip| net::ip_in_any(ip, &state.settings.app.tailnet_cidrs));
     let mut context = BTreeMap::new();
     context.insert(
         "cfg".to_owned(),
         TemplateValue::from_serialize(&state.settings.app),
     );
+    context.insert("on_tailnet".to_owned(), TemplateValue::from(on_tailnet));
     context.insert(
         "services".to_owned(),
         TemplateValue::from_serialize(&state.settings.app.services),

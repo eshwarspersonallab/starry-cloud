@@ -21,3 +21,6 @@ auth:
     scope: "openid email profile"
     # When non-empty, only these verified email addresses may sign in.
     allowed_emails: []
+    # With password login disabled, skip the login page and go straight to the
+    # provider (failures still show the page with an error, so it can't loop).
+    auto_login: false

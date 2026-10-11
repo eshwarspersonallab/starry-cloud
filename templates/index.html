@@ -59,6 +59,9 @@
             {{ system_hostname }}
           </span>
           {% endif %}
+          <span class="hostname-pill network-pill" title="How this device reached the dashboard">
+            {% if on_tailnet %}via Tailscale{% else %}via Internet{% endif %}
+          </span>
           {% if not cfg.bg_image_url %}
           <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
             <svg id="themeIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -117,10 +120,12 @@
           </div>
           <div class="services-grid">
             {% for svc in services %}
+            {% set locked = svc.tailnet_only and not on_tailnet %}
             <div
-              class="service-card"
+              class="service-card{% if locked %} service-card-locked{% endif %}"
               style="--card-index: {{ loop.index0 }}"
-              {% if svc.url %}data-url="{{ svc.url }}"{% endif %}
+              {% if svc.url and not locked %}data-url="{{ svc.url }}"{% endif %}
+              {% if locked %}aria-disabled="true" title="Only reachable over Tailscale"{% endif %}
             >
               <span
                 class="service-status status-unknown"
@@ -144,8 +149,11 @@
                 {% if svc.description %}
                 <p class="service-description">{{ svc.description }}</p>
                 {% endif %}
+                {% if svc.tailnet_only %}
+                <span class="service-tag">Tailscale only</span>
+                {% endif %}
               </div>
-              {% if svc.url %}
+              {% if svc.url and not locked %}
               <a
                 class="service-action-btn"
                 href="{{ svc.url }}"

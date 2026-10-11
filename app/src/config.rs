@@ -19,6 +19,10 @@ pub struct AppConfig {
     pub bg_image_blur: bool,
     #[serde(default)]
     pub services: Vec<Service>,
+    /// Address ranges treated as "on the private network". Services marked
+    /// `tailnet_only` are greyed out for visitors outside these ranges.
+    #[serde(default = "default_tailnet_cidrs")]
+    pub tailnet_cidrs: Vec<String>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -31,6 +35,9 @@ pub struct Service {
     pub icon_url: Option<String>,
     #[serde(default)]
     pub description: Option<String>,
+    /// Only reachable from the private network (see `tailnet_cidrs`).
+    #[serde(default)]
+    pub tailnet_only: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -48,6 +55,7 @@ pub struct AuthConfig {
     pub oidc_client_secret: Option<String>,
     pub oidc_scope: Vec<String>,
     pub oidc_allowed_emails: Vec<String>,
+    pub oidc_auto_login: bool,
     pub login_max_attempts: usize,
     pub login_window_seconds: u64,
     pub login_lockout_seconds: u64,
@@ -62,6 +70,13 @@ pub struct Settings {
 
 fn default_title() -> String {
     "Starry Cloud".to_owned()
+}
+
+fn default_tailnet_cidrs() -> Vec<String> {
+    crate::net::DEFAULT_TAILNET_CIDRS
+        .iter()
+        .map(|cidr| (*cidr).to_owned())
+        .collect()
 }
 
 fn read_yaml(path: &str) -> Result<Value, String> {
@@ -116,6 +131,13 @@ fn string_list(value: Option<&Value>) -> Result<Vec<String>, String> {
 fn read_app_config(value: Value) -> Result<AppConfig, String> {
     let app: AppConfig =
         serde_yaml::from_value(value).map_err(|error| format!("invalid config.yml: {error}"))?;
+    if let Some(bad) = app
+        .tailnet_cidrs
+        .iter()
+        .find(|cidr| crate::net::parse_cidr(cidr).is_none())
+    {
+        return Err(format!("invalid tailnet_cidrs entry in config.yml: {bad}"));
+    }
     Ok(app)
 }
 
@@ -194,6 +216,9 @@ fn read_auth_config(auth_file: Value, app_file: &Value) -> Result<AuthConfig, St
         oidc_client_secret,
         oidc_scope,
         oidc_allowed_emails: allowed_emails,
+        oidc_auto_login: oidc_enabled
+            && !password_enabled
+            && bool_value(mapping_value(oidc, "auto_login"), false),
         login_max_attempts: integer_value(mapping_value(login_protection, "login_max_attempts"), 5)
             .max(1) as usize,
         login_window_seconds: integer_value(

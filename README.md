@@ -18,6 +18,12 @@ Authentication supports username/password and OpenID Connect (OIDC). Configure O
 
 Set `auth.password_enabled: false` to disable password login; at least one authentication method must remain enabled. By default, any account the identity provider permits can sign in. Set `auth.oidc.allowed_emails` to restrict access to verified email addresses.
 
+## Network-aware service cards (fork addition)
+
+Mark services that are only reachable over a private network such as Tailscale with `tailnet_only: true` in `config.yml`. Visitors whose address is outside `tailnet_cidrs` (default: Tailscale's ranges) see those cards dimmed, not clickable, and tagged "Tailscale only"; a pill in the header shows "via Tailscale" or "via Internet". This needs the proxy to pass the visitor's real address (`trusted_proxy_hops`), so it works best when tailnet devices reach the dashboard directly (for example a DNS rewrite to the server's Tailscale IP) and everyone else comes through the public proxy.
+
+With OIDC as the only login method, `auth.oidc.auto_login: true` skips the one-button login page.
+
 ## Run
 
 Build the docker image

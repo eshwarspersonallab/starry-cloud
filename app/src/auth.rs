@@ -289,6 +289,7 @@ mod tests {
             oidc_client_secret: None,
             oidc_scope: Vec::new(),
             oidc_allowed_emails: Vec::new(),
+            oidc_auto_login: false,
             login_max_attempts: 5,
             login_window_seconds: 300,
             login_lockout_seconds: 900,
