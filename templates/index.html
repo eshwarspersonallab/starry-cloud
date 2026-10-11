@@ -53,15 +53,17 @@
     <div class="page">
       <header class="hero-header">
         <div class="hero-actions">
-          {% if system_hostname %}
-          <span class="hostname-pill">
-            <span class="dot" id="statusDot"></span>
-            {{ system_hostname }}
-          </span>
-          {% endif %}
-          <span class="hostname-pill network-pill" title="How this device reached the dashboard">
-            {% if on_tailnet %}via Tailscale{% else %}via Internet{% endif %}
-          </span>
+          <div class="hero-pills">
+            {% if system_hostname %}
+            <span class="hostname-pill">
+              <span class="dot" id="statusDot"></span>
+              {{ system_hostname }}
+            </span>
+            {% endif %}
+            <span class="hostname-pill network-pill" title="How this device reached the dashboard">
+              {% if on_tailnet %}via Tailscale{% else %}via Internet{% endif %}
+            </span>
+          </div>
           {% if not cfg.bg_image_url %}
           <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
             <svg id="themeIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -174,7 +176,7 @@
           </div>
         </section>
       </main>
-      <footer class="footer">© <span id="year"></span> Starry ⚝ | Powered by {{ device_model }}</footer>
+      <footer class="footer">© <span id="year"></span> Starry ⚝ | {% if cfg.footer %}{{ cfg.footer }}{% else %}Powered by {{ device_model }}{% endif %}</footer>
     </div>
     <script type="module" src="/static/js/ui.js"></script>
   </body>

@@ -19,6 +19,9 @@ login_protection:
 # Blur the background image (frosted look stays regardless of this option).
 # bg_image_blur: false
 
+# Optional footer text, replacing "Powered by <device model>".
+# footer: "My homelab"
+
 # Address ranges treated as "on the private network" (default: Tailscale's
 # 100.64.0.0/10 and fd7a:115c:a1e0::/48). The visitor's address is read the same
 # way as for login protection, so set trusted_proxy_hops to match your proxies.

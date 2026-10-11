@@ -250,6 +250,20 @@ body::after {
   margin-right: auto;
 }
 
+/* Hostname and network pills sit together on the left; the group takes the
+   free space so the theme toggle and logout stay on the right. */
+.hero-pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-right: auto;
+}
+
+.hero-pills .hostname-pill {
+  margin-right: 0;
+}
+
 .hero-greeting {
   margin: 0;
   font-size: clamp(1.8rem, 5vw, 2.8rem);
