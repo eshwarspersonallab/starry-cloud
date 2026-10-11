@@ -17,7 +17,7 @@ pub struct AppConfig {
     pub bg_image_url: Option<String>,
     #[serde(default)]
     pub bg_image_blur: bool,
-    /// Replaces the footer's "Powered by <device model>" text when set.
+    /// Footer text after "© <year>", replacing the default credit line.
     #[serde(default)]
     pub footer: Option<String>,
     #[serde(default)]

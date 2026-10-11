@@ -19,7 +19,8 @@ login_protection:
 # Blur the background image (frosted look stays regardless of this option).
 # bg_image_blur: false
 
-# Optional footer text, replacing "Powered by <device model>".
+# Optional footer text after "© <year>", replacing the default
+# "Starry ⚝ | Powered by <device model>".
 # footer: "My homelab"
 
 # Address ranges treated as "on the private network" (default: Tailscale's

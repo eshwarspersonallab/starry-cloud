@@ -176,7 +176,7 @@
           </div>
         </section>
       </main>
-      <footer class="footer">© <span id="year"></span> Starry ⚝ | {% if cfg.footer %}{{ cfg.footer }}{% else %}Powered by {{ device_model }}{% endif %}</footer>
+      <footer class="footer">© <span id="year"></span> {% if cfg.footer %}{{ cfg.footer }}{% else %}Starry ⚝ | Powered by {{ device_model }}{% endif %}</footer>
     </div>
     <script type="module" src="/static/js/ui.js"></script>
   </body>
